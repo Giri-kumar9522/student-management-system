@@ -1,0 +1,83 @@
+services:
+  - type: web
+    name: sample-student-management
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: gunicorn --chdir backend app:app
+    healthCheckPath: /api/session
+    disk:
+      name: sample-database
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_PATH
+        value: /var/data/sample.db
+      - key: COOKIE_SECURE
+        value: "1"
+      - key: FLASK_DEBUG
+        value: "0"
+      - key: FLASK_ENV
+        value: production
+      - key: ADMIN_EMAIL
+        value: admin@example.com
+      - key: ADMIN_NAME
+        value: Administrator
+      - key: ADMIN_PASSWORD
+        generateValue: true
+      - key: STAFF_EMAIL
+        value: staff1@example.com
+      - key: STAFF_NAME
+        value: Staff One
+      - key: STAFF_PASSWORD
+        generateValue: true
+      - key: STAFF_2_EMAIL
+        value: staff2@example.com
+      - key: STAFF_2_NAME
+        value: Staff Two
+      - key: STAFF_2_PASSWORD
+        generateValue: true
+      - key: STAFF_3_EMAIL
+        value: staff3@example.com
+      - key: STAFF_3_NAME
+        value: Staff Three
+      - key: STAFF_3_PASSWORD
+        generateValue: true
+      - key: STAFF_4_EMAIL
+        value: staff4@example.com
+      - key: STAFF_4_NAME
+        value: Staff Four
+      - key: STAFF_4_PASSWORD
+        generateValue: true
+      - key: STUDENT_EMAIL
+        value: student1@example.com
+      - key: STUDENT_NAME
+        value: Student One
+      - key: STUDENT_PASSWORD
+        generateValue: true
+      - key: STUDENT_2_EMAIL
+        value: student2@example.com
+      - key: STUDENT_2_NAME
+        value: Student Two
+      - key: STUDENT_2_PASSWORD
+        generateValue: true
+      - key: STUDENT_3_EMAIL
+        value: student3@example.com
+      - key: STUDENT_3_NAME
+        value: Student Three
+      - key: STUDENT_3_PASSWORD
+        generateValue: true
+      - key: STUDENT_4_EMAIL
+        value: student4@example.com
+      - key: STUDENT_4_NAME
+        value: Student Four
+      - key: STUDENT_4_PASSWORD
+        generateValue: true
+      - key: STUDENT_5_EMAIL
+        value: student5@example.com
+      - key: STUDENT_5_NAME
+        value: Student Five
+      - key: STUDENT_5_PASSWORD
+        generateValue: true
