@@ -1,6 +1,11 @@
 (function () {
   "use strict";
 
+  const rootElement = document.getElementById("root");
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const supportsScrollReveal = "IntersectionObserver" in window && !prefersReducedMotion;
+  if (supportsScrollReveal) rootElement.classList.add("motion-enabled");
+
   const h = React.createElement;
   const icons = {
     overview: ["M3 3h8v8H3z", "M13 3h8v5h-8z", "M13 10h8v11h-8z", "M3 13h8v8H3z"],
@@ -335,6 +340,20 @@
     }, [page, reloadKey]);
 
     React.useEffect(() => {
+      if (!supportsScrollReveal || loading) return undefined;
+      const revealObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("reveal-visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: "0px 0px -36px 0px" });
+      document.querySelectorAll(".content .fade-up").forEach((element) => revealObserver.observe(element));
+      return () => revealObserver.disconnect();
+    }, [page, loading, data]);
+
+    React.useEffect(() => {
       if (!toast) return undefined;
       const timer = window.setTimeout(() => setToast(""), 2300);
       return () => window.clearTimeout(timer);
@@ -496,7 +515,7 @@
           h("button", { className: "icon-button", type: "button", "aria-label": "Notifications", onClick: () => setToast("You're all caught up on campus news.") },
             h(Icon, { name: "bell", size: 16 }), h("span", { className: "notification-dot" })),
           h("div", { className: "top-avatar", title: user.name }, initials(user.name)))),
-      h("div", { className: "content" }, contentChildren));
+      h("div", { className: "content page-enter", key: page }, contentChildren));
 
     return h("div", { className: "app-shell" }, sidebar, mainArea,
       activeModal ? h(ManagementDialog, {
@@ -536,5 +555,5 @@
       : h(Login, { onLogin: setUser, demoCredentials });
   }
 
-  ReactDOM.createRoot(document.getElementById("root")).render(h(App));
+  ReactDOM.createRoot(rootElement).render(h(App));
 })();
